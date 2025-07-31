@@ -1,0 +1,132 @@
+#
+#  ██████╗  █████╗  ██████╗██╗  ██╗███╗   ███╗ █████╗ ██╗  ██╗███████╗
+#  ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝████╗ ████║██╔══██╗██║ ██╔╝██╔════╝
+#  ██████╔╝███████║██║     █████╔╝ ██╔████╔██║███████║█████╔╝ █████╗
+#  ██╔═══╝ ██╔══██║██║     ██╔═██╗ ██║╚██╔╝██║██╔══██║██╔═██╗ ██╔══╝
+#  ██║     ██║  ██║╚██████╗██║  ██╗██║ ╚═╝ ██║██║  ██║██║  ██╗███████╗
+#  ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
+#
+
+#
+# Ustawienia wiadomości
+#
+messages:
+  prefix: "&x&0&0&8&D&F&F&lO&x&0&0&8&9&F&F&lK&x&0&0&8&5&F&F&lE&x&0&0&8&1&F&F&lJ&x&0&0&7&D&F&F&l.&x&0&0&7&9&F&F&lS&x&0&0&7&4&F&F&lP&x&0&0&7&0&F&F&lA&x&0&0&6&C&F&F&lC&x&0&0&6&8&F&F&lE &8▶ "
+  reload: "&aKonfiguracja pluginu została przeładowana!"
+  collect: "&a+$%amount%"
+  no-permission: "&cNie masz uprawnień!"
+  protection:
+    insufficient_title: "&cNiewystarczający poziom zbroi!"
+    insufficient_subtitle: "&fWymagany: &4%required% &8| &fAktualny: &c%current%"
+  genboost:
+    activated: "&6&lGenBoost"
+    activated_subtitle: "&cBoost &4x%multiplier% &czostał aktywowany przez &4%player%"
+    ended: "&6&lGenBoost"
+    ended_subtitle: "&cBoost zakończył się"
+    bossbar: "&cGenBoost &4&lx%multiplier% &caktywowany przez &4%player% &c| &4%time%s"
+  generator:
+    enabled: "&aGenerator &e%generator% &azostał włączony!"
+    disabled: "&cGenerator &e%generator% &czostał wyłączony!"
+    list: "&7Lista generatorów:"
+    list_entry: "&8- &e%generator% &7(Status: %status%)"
+    not_found: "&cNie znaleziono generatora o takiej nazwie!"
+
+#
+# Ustawienia bossbara
+#
+bossbar:
+  enabled: false
+  title: "&aZebrano $%amount%"
+  color: GREEN  # Opcje: BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
+  style: SOLID  # Opcje: SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+  time: 1       # Jak długo ma być wyświetlany bossbar (w sekundach)
+
+#
+# Ustawienia itemków genboosta
+#
+genboost_items:
+  genboost2x:
+    name: "&x&F&0&D&B&D&B&lG&x&F&0&D&B&D&B&le&x&F&0&D&B&D&B&ln&x&F&0&D&B&D&B&lb&x&F&0&D&B&D&B&lo&x&F&0&D&B&D&B&lo&x&F&0&D&B&D&B&ls&x&F&0&D&B&D&B&lt &x&F&0&D&B&D&B&lx&x&F&0&D&B&D&B&l2"
+    material: MUSIC_DISC_STRAD
+    custom_model_data: 0
+    lore:
+      - "&8× &fCzas trwania: &610 minut"
+      - ""
+      - "&8× &fPo użyciu ze wszystkich &6generatorów"
+      - "&8× &fna serwerze wypada &a2 razy więcej"
+      - "&8× &fprzedmiotów!"
+      - ""
+      - "&aAby aktywować, kliknij prawym przyciskiem."
+    multiplier: 2
+    duration: 600
+  genboost5x:
+    name: "&x&3&F&D&E&2&7&lG&x&3&F&D&E&2&7&le&x&3&F&D&E&2&7&ln&x&3&F&D&E&2&7&lb&x&3&F&D&E&2&7&lo&x&3&F&D&E&2&7&lo&x&3&F&D&E&2&7&ls&x&3&F&D&E&2&7&lt &x&3&F&D&E&2&7&lx&x&3&F&D&E&2&7&l5"
+    material: MUSIC_DISC_CAT
+    custom_model_data: 0
+    lore:
+      - "&8× &fCzas trwania: &610 minut"
+      - ""
+      - "&8× &fPo użyciu ze wszystkich &6generatorów"
+      - "&8× &fna serwerze wypada &a5 razy więcej"
+      - "&8× &fprzedmiotów!"
+      - ""
+      - "&aAby aktywować, kliknij prawym przyciskiem."
+    multiplier: 5
+    duration: 600
+  genboost10x:
+    name: "&x&8&E&6&B&D&7&lG&x&8&E&6&B&D&7&le&x&8&E&6&B&D&7&ln&x&8&E&6&B&D&7&lb&x&8&E&6&B&D&7&lo&x&8&E&6&B&D&7&lo&x&8&E&6&B&D&7&ls&x&8&E&6&B&D&7&lt &x&8&E&6&B&D&7&lx&x&8&E&6&B&D&7&l1&x&8&E&6&B&D&7&l0"
+    material: MUSIC_DISC_MALL
+    custom_model_data: 0
+    lore:
+      - "&8× &fCzas trwania: &610 minut"
+      - ""
+      - "&8× &fPo użyciu ze wszystkich &6generatorów"
+      - "&8× &fna serwerze wypada &a10 razy więcej"
+      - "&8× &fprzedmiotów!"
+      - ""
+      - "&aAby aktywować, kliknij prawym przyciskiem."
+    multiplier: 10
+    duration: 600
+
+#
+# Ustawienia generatorów
+#
+generators:
+  generator_startowy1:
+    location:
+      world: "world"
+      x: 12
+      y: 99
+      z: 125
+    interval: 5      # Czas w sekundach pomiędzy generowaniem pieniędzy
+    amount: 0.20     # Ilość generowanych pieniędzy
+    enabled: true    # Czy generator ma być aktywny
+    allowed_protection_levels:
+      - 1.0  # Protection I
+      - 2.0  # Protection II
+    max_money_items: 2     # Maksymalna ilość pieniędzy leżących na ziemi
+    money_item_lifetime: 900   # Czas w sekundach po którym pieniądze znikają z ziemi
+    items_per_interval: 1
+
+  generator_startowy2:
+    location:
+      world: "world"
+      x: -170
+      y: 126
+      z: 278
+    interval: 5      # Czas w sekundach pomiędzy generowaniem pieniędzy
+    amount: 0.20     # Ilość generowanych pieniędzy
+    enabled: true    # Czy generator ma być aktywny
+    allowed_protection_levels:
+      - 1.0  # Protection I
+      - 2.0  # Protection II
+    max_money_items: 2     # Maksymalna ilość pieniędzy leżących na ziemi
+    money_item_lifetime: 900   # Czas w sekundach po którym pieniądze znikają z ziemi
+    items_per_interval: 1
+
+#
+# Ustawienia generowanego itemka
+#
+item:
+  name: "&a$%amount%"
+  custom-model-data: 10000

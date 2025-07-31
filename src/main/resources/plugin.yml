@@ -1,0 +1,31 @@
+name: A-PACKMAKE-SKYGEN
+version: '${project.version}'
+main: pl.okej.okejspaceskygengenerators.Main
+api-version: '1.18'
+depend: [Vault]
+authors: [ok_ej for PackMake]
+description: Plugin na generatory skygen wzorowany na serwerze MINESTAR.PL
+webiste: dc.packmake.pl
+  
+commands:
+  okejgenerators:
+    description: Główna komenda do pluginu
+    usage: |-
+      /<command> reload - Reload configuration
+      /<command> genboost <ilość> <czas> - Activate generator boost
+      /<command> nadaj <nazwa> - Give genboost item
+      /<command> toggle <generator> - Toggle generator on/off
+      /<command> list - List all generators
+    aliases: [packmakegen,generator,minestargenerator]
+    permission: okejgenerators.admin
+
+permissions:
+  okejgenerators.admin:
+    description: Allows access to admin commands
+    default: op
+  okejgenerators.collect:
+    description: Allows collecting money from generators
+    default: true
+  okejgenerators.genboost:
+    description: Allows using genboost items
+    default: true
