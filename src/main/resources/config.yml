@@ -89,6 +89,47 @@ genboost_items:
     duration: 600
 
 #
+# Ustawienia talizmanów
+#
+talismans:
+  1:
+    name: "&6&lTalizman I"
+    material: NETHER_STAR
+    custom_model_data: 0
+    multiplier: 0.5
+    lore:
+      - "&7Trzymaj w drugiej ręce aby aktywować"
+      - "&7Bonus do zarobków: &6+%multiplier%x"
+    enchantments:
+      LUCK: 1
+    flags:
+      - HIDE_ENCHANTS
+  2:
+    name: "&6&lTalizman II"
+    material: NETHER_STAR
+    custom_model_data: 0
+    multiplier: 1.0
+    lore:
+      - "&7Trzymaj w drugiej ręce aby aktywować"
+      - "&7Bonus do zarobków: &6+%multiplier%x"
+    enchantments:
+      LUCK: 2
+    flags:
+      - HIDE_ENCHANTS
+  3:
+    name: "&6&lTalizman III"
+    material: NETHER_STAR
+    custom_model_data: 0
+    multiplier: 1.5
+    lore:
+      - "&7Trzymaj w drugiej ręce aby aktywować"
+      - "&7Bonus do zarobków: &6+%multiplier%x"
+    enchantments:
+      LUCK: 3
+    flags:
+      - HIDE_ENCHANTS
+
+#
 # Ustawienia generatorów
 #
 generators:

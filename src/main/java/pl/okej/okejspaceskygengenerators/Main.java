@@ -4,11 +4,13 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.okej.okejspaceskygengenerators.commands.SkygenCommands;
+import pl.okej.okejspaceskygengenerators.commands.TalismanCommands;
 import pl.okej.okejspaceskygengenerators.config.ConfigManager;
 import pl.okej.okejspaceskygengenerators.generators.GeneratorManager;
 import pl.okej.okejspaceskygengenerators.listeners.MoneyPickupListener;
 import pl.okej.okejspaceskygengenerators.listeners.GenBoostListener;
 import pl.okej.okejspaceskygengenerators.genboost.GenBoostManager;
+import pl.okej.okejspaceskygengenerators.talismans.TalismanManager;
 import pl.okej.okejspaceskygengenerators.utils.MessageUtils;
 
 public final class Main extends JavaPlugin {
@@ -19,6 +21,7 @@ public final class Main extends JavaPlugin {
     private MessageUtils messageUtils;
     private Economy economy;
     private GenBoostManager genBoostManager;
+    private TalismanManager talismanManager;
 
     @Override
     public void onEnable() {
@@ -31,7 +34,7 @@ public final class Main extends JavaPlugin {
             getLogger().info("");
             getLogger().info("__________________________________________________________");
             getLogger().info("");
-            getLogger().info("             A-PACKMAKE-SKYGEN [1.0-SNAPSHOT]");
+            getLogger().info("             A-PACKMAKE-SKYGEN [1.1-SNAPSHOT]");
             getLogger().info("                      Autor: ok_ej");
             getLogger().info("             Discord: https://dc.packmake.pl");
             getLogger().info("");
@@ -47,6 +50,7 @@ public final class Main extends JavaPlugin {
 
         messageUtils = new MessageUtils(this);
         genBoostManager = new GenBoostManager(this);
+        talismanManager = new TalismanManager(this);
 
         generatorManager = new GeneratorManager(this);
         generatorManager.loadGenerators();
@@ -56,11 +60,12 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GenBoostListener(this), this);
 
         getCommand("okejgenerators").setExecutor(new SkygenCommands(this));
+        getCommand("packmake-talizmany").setExecutor(new TalismanCommands(this));
 
         getLogger().info("");
         getLogger().info("__________________________________________________________");
         getLogger().info("");
-        getLogger().info("             A-PACKMAKE-SKYGEN [1.0-SNAPSHOT]");
+        getLogger().info("             A-PACKMAKE-SKYGEN [1.1-SNAPSHOT]");
         getLogger().info("                      Autor: ok_ej");
         getLogger().info("             Discord: https://dc.packmake.pl");
         getLogger().info("");
@@ -83,7 +88,7 @@ public final class Main extends JavaPlugin {
         getLogger().info("");
         getLogger().info("__________________________________________________________");
         getLogger().info("");
-        getLogger().info("             A-PACKMAKE-SKYGEN [1.0-SNAPSHOT]");
+        getLogger().info("             A-PACKMAKE-SKYGEN [1.1-SNAPSHOT]");
         getLogger().info("                      Autor: ok_ej");
         getLogger().info("             Discord: https://dc.packmake.pl");
         getLogger().info("");
@@ -129,5 +134,9 @@ public final class Main extends JavaPlugin {
 
     public GenBoostManager getGenBoostManager() {
         return genBoostManager;
+    }
+
+    public TalismanManager getTalismanManager() {
+        return talismanManager;
     }
 }

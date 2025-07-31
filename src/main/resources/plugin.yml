@@ -6,7 +6,7 @@ depend: [Vault]
 authors: [ok_ej for PackMake]
 description: Plugin na generatory skygen wzorowany na serwerze MINESTAR.PL
 webiste: dc.packmake.pl
-  
+
 commands:
   okejgenerators:
     description: Główna komenda do pluginu
@@ -17,6 +17,12 @@ commands:
       /<command> toggle <generator> - Toggle generator on/off
       /<command> list - List all generators
     aliases: [packmakegen,generator,minestargenerator]
+    permission: okejgenerators.admin
+
+  packmake-talizmany:
+    description: Komenda do zarządzania talizmanami
+    usage: |-
+      /<command> nadaj <1/2/3> - Nadaj talizman
     permission: okejgenerators.admin
 
 permissions:

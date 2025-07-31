@@ -82,6 +82,12 @@ public class MoneyPickupListener implements Listener {
     }
 
     private void collectMoney(Player player, double amount) {
+        // Apply talisman multiplier
+        double talismanMultiplier = plugin.getTalismanManager().getTalismanMultiplier(player);
+        if (talismanMultiplier > 0) {
+            amount += amount * talismanMultiplier;
+        }
+
         BigDecimal bd = new BigDecimal(amount);
         bd = bd.setScale(2, RoundingMode.HALF_UP);
         double roundedAmount = bd.doubleValue();
