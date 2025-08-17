@@ -120,20 +120,21 @@ public class SkygenCommands implements CommandExecutor, TabCompleter {
                     sender.sendMessage(plugin.getMessageUtils().formatMessage(listEntry));
                 }
                 return true;
-        }
-        case "create":
-        if (!sender.hasPermission("okejgenerators.admin")) {
-            sender.sendMessage(plugin.getMessageUtils().formatMessage(plugin.getConfigManager().getMessage("no-permission")));
-            return true;
-        }
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(plugin.getMessageUtils().formatMessage("&cTa komenda jest dostępna tylko dla graczy!"));
-            return true;
-        }
-        if (args.length < 4) {
-            sender.sendMessage(plugin.getMessageUtils().formatMessage("&cUżycie: /okejgenerators create <nazwa> <block/money> <blok/ilość> <czas>"));
-            return true;
-        }
+                }
+
+            case "create":
+                if (!sender.hasPermission("okejgenerators.admin")) {
+                sender.sendMessage(plugin.getMessageUtils().formatMessage(plugin.getConfigManager().getMessage("no-permission")));
+                    return true;
+                }
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage(plugin.getMessageUtils().formatMessage("&cTa komenda jest dostępna tylko dla graczy!"));
+                    return true;
+                }
+                if (args.length < 4) {
+                    sender.sendMessage(plugin.getMessageUtils().formatMessage("&cUżycie: /okejgenerators create <nazwa> <block/money> <blok/ilość> <czas>"));
+                    return true;
+                }
 
         Player player = (Player) sender;
         String generatorName = args[1];
