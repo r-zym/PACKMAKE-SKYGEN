@@ -2,6 +2,7 @@ package pl.okej.okejspaceskygengenerators.generators;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
@@ -20,6 +21,8 @@ public class Generator {
     private final Location location;
     private final int interval;
     private final double amount;
+    private final Material blockType;
+    private final GeneratorType type;
     private final List<Double> allowedProtectionLevels;
     private final int maxMoneyItems;
     private final int moneyItemLifetime;
@@ -51,8 +54,30 @@ public class Generator {
         double z = locationSection.getDouble("z");
         Location location = new Location(world, x, y, z);
 
+        String typeStr = section.getString("type", "money").toUpperCase();
+        GeneratorType type;
+        try {
+            type = GeneratorType.valueOf(typeStr);
+        } catch (IllegalArgumentException e) {
+            type = GeneratorType.MONEY;
+        }
+
         int interval = section.getInt("interval", 300);
-        double amount = section.getDouble("amount", 1000);
+        double amount = 0;
+        Material blockType = null;
+
+        if (type == GeneratorType.MONEY) {
+            amount = section.getDouble("amount", 1000);
+        } else if (type == GeneratorType.BLOCK) {
+            String blockName = section.getString("block_type", "STONE");
+            try {
+                blockType = Material.valueOf(blockName.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                Main.getInstance().getLogger().warning("Nieprawidłowy typ bloku '" + blockName + "' dla generatora '" + id + "'!");
+                blockType = Material.STONE;
+            }
+        }
+
         boolean enabled = section.getBoolean("enabled", true);
         int maxMoneyItems = section.getInt("max_money_items", 10);
         int moneyItemLifetime = section.getInt("money_item_lifetime", 300);
@@ -73,15 +98,17 @@ public class Generator {
             }
         }
 
-        return new Generator(id, location, interval, amount, enabled, allowedProtectionLevels, maxMoneyItems, moneyItemLifetime, itemsPerInterval);
+        return new Generator(id, location, interval, amount, blockType, type, enabled, allowedProtectionLevels, maxMoneyItems, moneyItemLifetime, itemsPerInterval);
     }
 
-    public Generator(String id, Location location, int interval, double amount, boolean enabled,
+    public Generator(String id, Location location, int interval, double amount, Material blockType, GeneratorType type, boolean enabled,
                      List<Double> allowedProtectionLevels, int maxMoneyItems, int moneyItemLifetime, int itemsPerInterval) {
         this.id = id;
         this.location = location;
         this.interval = interval;
         this.amount = amount;
+        this.blockType = blockType;
+        this.type = type;
         this.enabled = enabled;
         this.allowedProtectionLevels = allowedProtectionLevels;
         this.maxMoneyItems = maxMoneyItems;
@@ -101,7 +128,7 @@ public class Generator {
         }, 20L, interval * 20L);
 
         cleanupTask = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
-            cleanupOldMoneyItems();
+            cleanupOldItems();
         }, 20L, 20L);
     }
 
@@ -116,7 +143,7 @@ public class Generator {
         }
     }
 
-    private int countNearbyMoneyItemsFromThisGenerator() {
+    private int countNearbyItemsFromThisGenerator() {
         Collection<Entity> nearbyEntities = location.getWorld().getNearbyEntities(
                 location,
                 MONEY_ITEMS_CHECK_RADIUS,
@@ -128,9 +155,16 @@ public class Generator {
         for (Entity entity : nearbyEntities) {
             if (entity instanceof Item) {
                 Item item = (Item) entity;
-                if (MoneyItem.isMoneyItem(item.getItemStack()) &&
-                        id.equals(MoneyItem.getGeneratorId(item.getItemStack()))) {
-                    count++;
+                if (type == GeneratorType.MONEY) {
+                    if (MoneyItem.isMoneyItem(item.getItemStack()) &&
+                            id.equals(MoneyItem.getGeneratorId(item.getItemStack()))) {
+                        count++;
+                    }
+                } else if (type == GeneratorType.BLOCK) {
+                    if (BlockItem.isBlockItem(item.getItemStack()) &&
+                            id.equals(BlockItem.getGeneratorId(item.getItemStack()))) {
+                        count++;
+                    }
                 }
             }
         }
@@ -147,28 +181,31 @@ public class Generator {
             return;
         }
 
-        int currentMoneyItems = countNearbyMoneyItemsFromThisGenerator();
+        int currentItems = countNearbyItemsFromThisGenerator();
 
-        if (currentMoneyItems >= maxMoneyItems) {
+        if (currentItems >= maxMoneyItems) {
             return;
         }
 
-        int itemsToSpawn = Math.min(itemsPerInterval, maxMoneyItems - currentMoneyItems);
+        int itemsToSpawn = Math.min(itemsPerInterval, maxMoneyItems - currentItems);
         if (itemsToSpawn <= 0) {
             return;
         }
 
-        double finalAmount = amount;
-        if (Main.getInstance().getGenBoostManager().isActive()) {
-            finalAmount *= Main.getInstance().getGenBoostManager().getMultiplier();
-        }
-
         for (int i = 0; i < itemsToSpawn; i++) {
-            MoneyItem.spawn(location, finalAmount, id, System.currentTimeMillis());
+            if (type == GeneratorType.MONEY) {
+                double finalAmount = amount;
+                if (Main.getInstance().getGenBoostManager().isActive()) {
+                    finalAmount *= Main.getInstance().getGenBoostManager().getMultiplier();
+                }
+                MoneyItem.spawn(location, finalAmount, id, System.currentTimeMillis());
+            } else if (type == GeneratorType.BLOCK) {
+                BlockItem.spawn(location, blockType, id, System.currentTimeMillis());
+            }
         }
     }
 
-    private void cleanupOldMoneyItems() {
+    private void cleanupOldItems() {
         Collection<Entity> nearbyEntities = location.getWorld().getNearbyEntities(
                 location,
                 MONEY_ITEMS_CHECK_RADIUS,
@@ -180,10 +217,19 @@ public class Generator {
         for (Entity entity : nearbyEntities) {
             if (entity instanceof Item) {
                 Item item = (Item) entity;
-                if (MoneyItem.isMoneyItem(item.getItemStack())) {
+
+                if (type == GeneratorType.MONEY && MoneyItem.isMoneyItem(item.getItemStack())) {
                     String itemGeneratorId = MoneyItem.getGeneratorId(item.getItemStack());
                     if (id.equals(itemGeneratorId)) {
                         long spawnTime = MoneyItem.getSpawnTime(item.getItemStack());
+                        if (spawnTime > 0 && (currentTime - spawnTime) / 1000 >= moneyItemLifetime) {
+                            entity.remove();
+                        }
+                    }
+                } else if (type == GeneratorType.BLOCK && BlockItem.isBlockItem(item.getItemStack())) {
+                    String itemGeneratorId = BlockItem.getGeneratorId(item.getItemStack());
+                    if (id.equals(itemGeneratorId)) {
+                        long spawnTime = BlockItem.getSpawnTime(item.getItemStack());
                         if (spawnTime > 0 && (currentTime - spawnTime) / 1000 >= moneyItemLifetime) {
                             entity.remove();
                         }
@@ -207,6 +253,14 @@ public class Generator {
 
     public double getAmount() {
         return amount;
+    }
+
+    public Material getBlockType() {
+        return blockType;
+    }
+
+    public GeneratorType getType() {
+        return type;
     }
 
     public boolean isEnabled() {

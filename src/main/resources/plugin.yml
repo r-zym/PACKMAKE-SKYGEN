@@ -14,6 +14,7 @@ commands:
       /<command> reload - Reload configuration
       /<command> genboost <ilość> <czas> - Activate generator boost
       /<command> nadaj <nazwa> - Give genboost item
+      /<command> create <nazwa> <block/money> <blok/ilość> <czas> - Create new generator
       /<command> toggle <generator> - Toggle generator on/off
       /<command> list - List all generators
     aliases: [packmakegen,generator,minestargenerator]

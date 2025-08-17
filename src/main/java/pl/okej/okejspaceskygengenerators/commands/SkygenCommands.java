@@ -6,10 +6,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
+import org.bukkit.Location;
 import pl.okej.okejspaceskygengenerators.Main;
 import pl.okej.okejspaceskygengenerators.generators.Generator;
+import pl.okej.okejspaceskygengenerators.generators.GeneratorType;
 import pl.okej.okejspaceskygengenerators.genboost.GenBoostItem;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,6 +121,69 @@ public class SkygenCommands implements CommandExecutor, TabCompleter {
                 }
                 return true;
         }
+        case "create":
+        if (!sender.hasPermission("okejgenerators.admin")) {
+            sender.sendMessage(plugin.getMessageUtils().formatMessage(plugin.getConfigManager().getMessage("no-permission")));
+            return true;
+        }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(plugin.getMessageUtils().formatMessage("&cTa komenda jest dostępna tylko dla graczy!"));
+            return true;
+        }
+        if (args.length < 4) {
+            sender.sendMessage(plugin.getMessageUtils().formatMessage("&cUżycie: /okejgenerators create <nazwa> <block/money> <blok/ilość> <czas>"));
+            return true;
+        }
+
+        Player player = (Player) sender;
+        String generatorName = args[1];
+        String typeStr = args[2].toLowerCase();
+        String valueStr = args[3];
+
+        try {
+            int interval = Integer.parseInt(args[4]);
+
+            if (plugin.getGeneratorManager().getGenerator(generatorName) != null) {
+                sender.sendMessage(plugin.getMessageUtils().formatMessage("&cGenerator o takiej nazwie już istnieje!"));
+                return true;
+            }
+
+            Location playerLoc = player.getLocation();
+
+            if (typeStr.equals("money")) {
+                try {
+                    double amount = Double.parseDouble(valueStr);
+                    createMoneyGenerator(generatorName, playerLoc, amount, interval);
+                    sender.sendMessage(plugin.getMessageUtils().formatMessage("&aUtworzono generator pieniędzy &e" + generatorName + " &ana pozycji &7" +
+                            (int)playerLoc.getX() + ", " + (int)playerLoc.getY() + ", " + (int)playerLoc.getZ()));
+                } catch (NumberFormatException e) {
+                    sender.sendMessage(plugin.getMessageUtils().formatMessage("&cNieprawidłowa ilość pieniędzy!"));
+                    return true;
+                }
+            } else if (typeStr.equals("block")) {
+                try {
+                    Material blockType = Material.valueOf(valueStr.toUpperCase());
+                    createBlockGenerator(generatorName, playerLoc, blockType, interval);
+                    sender.sendMessage(plugin.getMessageUtils().formatMessage("&aUtworzono generator bloków &e" + generatorName + " &ana pozycji &7" +
+                            (int)playerLoc.getX() + ", " + (int)playerLoc.getY() + ", " + (int)playerLoc.getZ()));
+                } catch (IllegalArgumentException e) {
+                    sender.sendMessage(plugin.getMessageUtils().formatMessage("&cNieprawidłowy typ bloku!"));
+                    return true;
+                }
+            } else {
+                sender.sendMessage(plugin.getMessageUtils().formatMessage("&cTyp generatora musi być 'money' lub 'block'!"));
+                return true;
+            }
+
+        } catch (NumberFormatException e) {
+            sender.sendMessage(plugin.getMessageUtils().formatMessage("&cNieprawidłowy czas!"));
+            return true;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            sender.sendMessage(plugin.getMessageUtils().formatMessage("&cUżycie: /okejgenerators create <nazwa> <block/money> <blok/ilość> <czas>"));
+            return true;
+        }
+        return true;
+
 
         showHelp(sender);
         return true;
@@ -131,6 +198,7 @@ public class SkygenCommands implements CommandExecutor, TabCompleter {
                 completions.add("reload");
                 completions.add("genboost");
                 completions.add("nadaj");
+                completions.add("create");
                 completions.add("toggle");
                 completions.add("list");
             }
@@ -144,6 +212,13 @@ public class SkygenCommands implements CommandExecutor, TabCompleter {
                 case "toggle":
                     if (sender.hasPermission("okejgenerators.admin")) {
                         plugin.getGeneratorManager().getGenerators().forEach(gen -> completions.add(gen.getId()));
+                    }
+                    break;
+                case "create":
+                    if (sender.hasPermission("okejgenerators.admin")) {
+                        if (args.length == 3) {
+                            completions.addAll(Arrays.asList("money", "block"));
+                        }
                     }
                     break;
             }
@@ -161,8 +236,51 @@ public class SkygenCommands implements CommandExecutor, TabCompleter {
             sender.sendMessage(plugin.getMessageUtils().formatMessage("&8→ &9/okgen reload &7- &fPrzeładuj konfigurację pluginu"));
             sender.sendMessage(plugin.getMessageUtils().formatMessage("&8→ &9/okgen genboost <ilość> <czas> &7- &fAktywuj boost generatorów"));
             sender.sendMessage(plugin.getMessageUtils().formatMessage("&8→ &9/okgen nadaj <nazwa> &7- &fNadaj genboosta"));
+            sender.sendMessage(plugin.getMessageUtils().formatMessage("&8→ &9/okgen create <nazwa> <block/money> <blok/ilość> <czas> &7- &fUtwórz generator"));
             sender.sendMessage(plugin.getMessageUtils().formatMessage("&8→ &9/okgen toggle <generator> &7- &fWłącz/wyłącz generator"));
             sender.sendMessage(plugin.getMessageUtils().formatMessage("&8→ &9/okgen list &7- &fLista generatorów"));
         }
+    }
+
+    private void createMoneyGenerator(String name, Location location, double amount, int interval) {
+        plugin.getConfigManager().getConfig().set("generators." + name + ".location.world", location.getWorld().getName());
+        plugin.getConfigManager().getConfig().set("generators." + name + ".location.x", location.getBlockX());
+        plugin.getConfigManager().getConfig().set("generators." + name + ".location.y", location.getBlockY());
+        plugin.getConfigManager().getConfig().set("generators." + name + ".location.z", location.getBlockZ());
+        plugin.getConfigManager().getConfig().set("generators." + name + ".type", "money");
+        plugin.getConfigManager().getConfig().set("generators." + name + ".interval", interval);
+        plugin.getConfigManager().getConfig().set("generators." + name + ".amount", amount);
+        plugin.getConfigManager().getConfig().set("generators." + name + ".enabled", true);
+        plugin.getConfigManager().getConfig().set("generators." + name + ".allowed_protection_levels", Arrays.asList(1.0, 2.0));
+        plugin.getConfigManager().getConfig().set("generators." + name + ".max_money_items", 2);
+        plugin.getConfigManager().getConfig().set("generators." + name + ".money_item_lifetime", 900);
+        plugin.getConfigManager().getConfig().set("generators." + name + ".items_per_interval", 1);
+        plugin.getConfigManager().saveConfig();
+
+        Generator generator = new Generator(name, location, interval, amount, null, GeneratorType.MONEY, true,
+                Arrays.asList(1.0, 2.0), 2, 900, 1);
+        plugin.getGeneratorManager().addGenerator(name, generator);
+        generator.start();
+    }
+
+    private void createBlockGenerator(String name, Location location, Material blockType, int interval) {
+        plugin.getConfigManager().getConfig().set("generators." + name + ".location.world", location.getWorld().getName());
+        plugin.getConfigManager().getConfig().set("generators." + name + ".location.x", location.getBlockX());
+        plugin.getConfigManager().getConfig().set("generators." + name + ".location.y", location.getBlockY());
+        plugin.getConfigManager().getConfig().set("generators." + name + ".location.z", location.getBlockZ());
+        plugin.getConfigManager().getConfig().set("generators." + name + ".type", "block");
+        plugin.getConfigManager().getConfig().set("generators." + name + ".block_type", blockType.name());
+        plugin.getConfigManager().getConfig().set("generators." + name + ".interval", interval);
+        plugin.getConfigManager().getConfig().set("generators." + name + ".enabled", true);
+        plugin.getConfigManager().getConfig().set("generators." + name + ".allowed_protection_levels", Arrays.asList(1.0, 2.0));
+        plugin.getConfigManager().getConfig().set("generators." + name + ".max_money_items", 2);
+        plugin.getConfigManager().getConfig().set("generators." + name + ".money_item_lifetime", 900);
+        plugin.getConfigManager().getConfig().set("generators." + name + ".items_per_interval", 1);
+        plugin.getConfigManager().saveConfig();
+
+        Generator generator = new Generator(name, location, interval, 0, blockType, GeneratorType.BLOCK, true,
+                Arrays.asList(1.0, 2.0), 2, 900, 1);
+        plugin.getGeneratorManager().addGenerator(name, generator);
+        generator.start();
     }
 }

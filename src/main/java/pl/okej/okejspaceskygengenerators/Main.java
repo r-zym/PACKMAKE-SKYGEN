@@ -58,6 +58,7 @@ public final class Main extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new MoneyPickupListener(this), this);
         getServer().getPluginManager().registerEvents(new GenBoostListener(this), this);
+        getServer().getPluginManager().registerEvents(new pl.okej.okejspaceskygengenerators.listeners.BlockPickupListener(this), this);
 
         getCommand("okejgenerators").setExecutor(new SkygenCommands(this));
         getCommand("packmake-talizmany").setExecutor(new TalismanCommands(this));

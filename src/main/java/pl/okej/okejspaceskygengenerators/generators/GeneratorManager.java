@@ -68,4 +68,8 @@ public class GeneratorManager {
             plugin.getConfigManager().saveConfig();
         }
     }
+
+    public void addGenerator(String id, Generator generator) {
+        generators.put(id, generator);
+    }
 }
