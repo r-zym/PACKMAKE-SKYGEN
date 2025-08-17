@@ -5,7 +5,7 @@ api-version: '1.18'
 depend: [Vault]
 authors: [ok_ej for PackMake]
 description: Plugin na generatory skygen wzorowany na serwerze MINESTAR.PL
-webiste: dc.packmake.pl
+website: dc.packmake.pl
 
 commands:
   okejgenerators:

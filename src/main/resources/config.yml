@@ -8,6 +8,13 @@
 #
 
 #
+# Ustawienia licencji
+#
+license:
+  key: ""
+  customer_id: ""
+
+#
 # Ustawienia wiadomości
 #
 messages:

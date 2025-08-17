@@ -1,17 +1,21 @@
 package pl.okej.okejspaceskygengenerators;
 
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.okej.okejspaceskygengenerators.commands.SkygenCommands;
 import pl.okej.okejspaceskygengenerators.commands.TalismanCommands;
 import pl.okej.okejspaceskygengenerators.config.ConfigManager;
 import pl.okej.okejspaceskygengenerators.generators.GeneratorManager;
+import pl.okej.okejspaceskygengenerators.license.LicenseManager;
 import pl.okej.okejspaceskygengenerators.listeners.MoneyPickupListener;
 import pl.okej.okejspaceskygengenerators.listeners.GenBoostListener;
 import pl.okej.okejspaceskygengenerators.genboost.GenBoostManager;
 import pl.okej.okejspaceskygengenerators.talismans.TalismanManager;
 import pl.okej.okejspaceskygengenerators.utils.MessageUtils;
+import pl.okej.okejspaceskygengenerators.utils.MessageUtil;
+import pl.okej.okejspaceskygengenerators.utils.VersionChecker;
 
 public final class Main extends JavaPlugin {
 
@@ -19,16 +23,37 @@ public final class Main extends JavaPlugin {
     private ConfigManager configManager;
     private GeneratorManager generatorManager;
     private MessageUtils messageUtils;
+    private MessageUtil messageUtil;
     private Economy economy;
     private GenBoostManager genBoostManager;
     private TalismanManager talismanManager;
+    private LicenseManager licenseManager;
+    private VersionChecker versionChecker;
 
     @Override
     public void onEnable() {
         instance = this;
 
+        // Plugin.yml protection check
+        if (!this.getDescription().getAuthors().contains("ok_ej for PackMake") || 
+            !this.getDescription().getWebsite().equalsIgnoreCase("dc.packmake.pl")) {
+            this.getLogger().severe("╔════════════════════════════════════════════════════════╗");
+            this.getLogger().severe("║                        BŁĄD                            ║");
+            this.getLogger().severe("║               NIE EDYTUJ PLUGIN.YML                    ║");
+            this.getLogger().severe("╚════════════════════════════════════════════════════════╝");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         configManager = new ConfigManager(this);
         configManager.loadConfig();
+
+        // Initialize license system
+        licenseManager = new LicenseManager(this);
+        if (!licenseManager.verifyLicense()) {
+            licenseManager.disablePlugin();
+            return;
+        }
 
         if (!setupEconomy()) {
             getLogger().info("");
@@ -49,8 +74,13 @@ public final class Main extends JavaPlugin {
         }
 
         messageUtils = new MessageUtils(this);
+        messageUtil = new MessageUtil(this);
         genBoostManager = new GenBoostManager(this);
         talismanManager = new TalismanManager(this);
+
+        // Initialize version checker
+        versionChecker = new VersionChecker(this);
+        getServer().getPluginManager().registerEvents(versionChecker, this);
 
         generatorManager = new GeneratorManager(this);
         generatorManager.loadGenerators();
@@ -139,5 +169,17 @@ public final class Main extends JavaPlugin {
 
     public TalismanManager getTalismanManager() {
         return talismanManager;
+    }
+
+    public LicenseManager getLicenseManager() {
+        return licenseManager;
+    }
+
+    public MessageUtil getMessageUtil() {
+        return messageUtil;
+    }
+
+    public VersionChecker getVersionChecker() {
+        return versionChecker;
     }
 }
