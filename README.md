@@ -9,7 +9,6 @@ PACKMAKE-SKYGEN to zaawansowany plugin na generatory do serwerów Minecraft (na 
 - 🔮 **Talizmany** – Przedmioty specjalne dające bonus do generowania pieniędzy.
 - 📦 **Config YAML** – Łatwa konfiguracja generatorów, genboostów i talizmanów.
 - 🔄 **Synchronizacja z ekonomią** – W pełni kompatybilny z Vault.
-- 📊 **Statystyki** – Śledzenie postępów gracza, liczby wygenerowanych bloków itd.
 - 🚀 **Generatory od poziomu seta** - Plugin zczytuje sumę enchantu protection na zbroi gracza i jeśli równa się ona z tą ustawioną w configu gracz może skorzystać z generatora.
 
 ## 🛠️ Instalacja
