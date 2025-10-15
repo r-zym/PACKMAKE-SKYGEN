@@ -1,3 +1,5 @@
+# PLUGIN ZOSTAŁ DYSKONTYNUOWANY. ZAWIERA BŁĘDY I NIE ZALECA SIĘ JEGO UŻYWANIA. ABY UZYSKAĆ JEGO LEPSZĄ I WYDAJNIEJSZĄ WERSJĘ, WEJDŹ NA DISCORDA https://dc.aureline.fun ABY POBRAĆ.
+
 # 🌌 PACKMAKE-SKYGEN – Wydajny plugin na generatory (inspirowany MineStar.pl)
 
 PACKMAKE-SKYGEN to zaawansowany plugin na generatory do serwerów Minecraft (na tryb SkyGen), wzorowany na rozgrywce znanej z **MineStar.pl**. Zawiera unikalne funkcje, takie jak **GenBoosty** oraz **Talizmany**, które wzbogacają ekonomię i dynamikę gry.
